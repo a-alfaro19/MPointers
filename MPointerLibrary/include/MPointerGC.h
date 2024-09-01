@@ -26,7 +26,7 @@ public:
      * @brief Get the instance of the MPointerGC
      * @return Instance of the MPointerGC
      */
-    MPointerGC* getInstance();
+    static MPointerGC* getInstance();
 
     /**
      * @brief Register a pointer
@@ -51,6 +51,18 @@ public:
      * @brief Stop the MPointerGC
      */
     void stop() noexcept;
+
+    /**
+    * @brief Check if the MPointerGC is running
+    * @return True if the MPointerGC is running, false otherwise
+    */
+    [[nodiscard]] bool isRunning() const noexcept;
+
+    /**
+     * @brief Get the number of pointers
+     * @return Number of pointers
+     */
+    [[nodiscard]] int getMPointersCount() const noexcept;
 
 private:
    /**
@@ -91,10 +103,10 @@ private:
     [[nodiscard]] PointerInfo* findByID(int id) ;
 
     DoublyLinkedList<PointerInfo*> mPointers; // List of pointers
-    std::mutex mutex; // Mutex for the list
+    static std::mutex mutex; // Mutex for the list
     int nextId; // Next id to assign
     bool running; // Flag to stop the GC
     std::condition_variable cv; // Condition variable to stop the GC
     std::thread gcThread; // Thread to run the GC
-    MPointerGC* instance{}; // Instance of the MPointerGC
+    static MPointerGC* instance; // Instance of the MPointerGC
 };

@@ -9,9 +9,9 @@ public:
      * @brief Create a new MPointer
      * @return MPointer
      */
-    MPointer New() {
+    static MPointer New() {
         T* memory = new T();
-        int newId = gc().registerPointer(memory);
+        int newId = gc()->registerPointer(memory);
 
         return MPointer(memory, newId);
     }
@@ -20,7 +20,7 @@ public:
      * @brief Destructor
      */
     ~MPointer() {
-        gc().unregisterPointer(id);
+        gc()->unregisterPointer(id);
     }
 
     /**
@@ -48,7 +48,8 @@ public:
         if (this != &other) {
             *pointer = *other.pointer;
             id = other.id;
-            gc().incrementReference(id);
+            gc()->unregisterPointer(other.id);
+            gc()->incrementReference(id);
         }
 
         return *this;
@@ -87,7 +88,7 @@ private:
      * @brief Get the MPointerGC instance
      * @return MPointerGC instance
      */
-    static MPointerGC *gc() {
+    static MPointerGC* gc() {
         return MPointerGC::getInstance();
     }
 

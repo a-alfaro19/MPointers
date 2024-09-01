@@ -3,4 +3,34 @@ project(MainApp)
 
 set(CMAKE_CXX_STANDARD 20)
 
+add_subdirectory(../MPointerLibrary ../../MPointerLibrary/build/)
+
+include_directories(include)
+
+set(SOURCES
+        src/SortAlgorithms.cpp
+)
+
 add_executable(MainApp main.cpp)
+
+target_include_directories(MainApp PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
+target_link_libraries(MainApp PRIVATE MPointerLibrary)
+
+# Add Google Test
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        URL https://github.com/google/googletest/archive/refs/tags/v1.15.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+# Add test files
+set(TEST_SOURCES
+        tests/SortAlgorithmsTest.cpp
+)
+
+add_executable(MainApp_GTests_run ${TEST_SOURCES})
+target_link_libraries(MainApp_GTests_run gtest gtest_main MPointerLibrary)
+add_test(NAME MainApp_GTests_run COMMAND MainApp_GTests_run )

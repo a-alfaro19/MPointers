@@ -1,7 +1,10 @@
 #include <iostream>
+#include "MPointer.h"
 
 int main()
 {
-    std::cout << "Hello, World!" << std::endl;
+    MPointer<int> myPtr = MPointer<int>::New();
+    *myPtr = 42;
+    std::cout << "Value: " << *myPtr << std::endl;
     return 0;
 }

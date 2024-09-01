@@ -1,5 +1,8 @@
 #include "MPointerGC.h"
 
+MPointerGC* MPointerGC::instance{nullptr};
+std::mutex MPointerGC::mutex;
+
 MPointerGC::~MPointerGC() {
     stop();
     if (gcThread.joinable()) {
@@ -40,6 +43,15 @@ void MPointerGC::stop() noexcept {
     std::lock_guard<std::mutex> lock(mutex);
     running = false;
     cv.notify_all();
+}
+
+bool MPointerGC::isRunning() const noexcept {
+    return running;
+}
+
+int MPointerGC::getMPointersCount() const noexcept {
+    std::lock_guard<std::mutex> lock(mutex);
+    return mPointers.getSize();
 }
 
 MPointerGC::MPointerGC()
