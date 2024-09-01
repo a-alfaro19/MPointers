@@ -3,6 +3,81 @@
 
 template <typename T>
 class DoublyLinkedList {
+/**
+ * @brief Node structure
+ */
+struct Node {
+    T data; // Data stored in the node
+    Node* next; // Pointer to the next node
+    Node* prev; // Pointer to the previous node
+};
+
+/**
+ * @brief Iterator class
+ */
+class Iterator {
+public:
+    /**
+     * @brief Constructor
+     * @param node Node to point to
+     */
+    explicit Iterator(Node* node): current(node) {}
+
+    /**
+     * @brief Get the data of the current node
+     * @return Data of the current node
+     */
+    T& operator*() {
+        return current->data;
+    }
+
+    /**
+     * @brief Get the current node data
+     * @return Data of the current node
+     */
+    T* operator->() {
+        return &current->data;
+    }
+
+    /**
+     * @brief Get the next node
+     * @return Next node
+     */
+    Iterator& operator++() {
+        current = current->next;
+        return *this;
+    }
+
+    /**
+     * @brief Get the previous node
+     * @return Previous node
+     */
+    Iterator operator--() {
+        current = current->prev;
+        return *this;
+    }
+
+    /**
+     * @brief Compare two iterators
+     * @param other Other iterator to compare
+     * @return True if the iterators are equal, false otherwise
+     */
+    bool operator==(const Iterator& other) const {
+        return current == other.current;
+    }
+
+    /**
+     * @brief Compare two iterators
+     * @param other Other iterator to compare
+     * @return True if the iterators are different, false otherwise
+     */
+    bool operator!=(const Iterator& other) const {
+        return current != other.current;
+    }
+
+    Node* current; // Current node
+};
+
 public:
     /**
      * @brief Constructor
@@ -85,11 +160,6 @@ public:
     }
 
     /**
-     * @brief Iterator class
-     */
-    class Iterator;
-
-    /**
      * @brief Remove a node from the list
      * @param data Data to remove
      * @return Iterator to the next node
@@ -139,80 +209,6 @@ public:
     }
 
 private:
-    /**
-     * @brief Node structure
-     */
-    struct Node {
-        T data; // Data stored in the node
-        Node* next; // Pointer to the next node
-        Node* prev; // Pointer to the previous node
-    };
-
-    /**
-     * @brief Iterator class
-     */
-    class Iterator {
-        /**
-         * @brief Constructor
-         * @param node Node to point to
-         */
-        explicit Iterator(Node* node): current(node) {}
-
-        /**
-         * @brief Get the data of the current node
-         * @return Data of the current node
-         */
-        T& operator*() {
-            return current->data;
-        }
-
-        /**
-         * @brief Get the current node data
-         * @return Data of the current node
-         */
-        T* operator->() {
-            return &current->data;
-        }
-
-        /**
-         * @brief Get the next node
-         * @return Next node
-         */
-        Iterator& operator++() {
-            current = current->next;
-            return *this;
-        }
-
-        /**
-         * @brief Get the previous node
-         * @return Previous node
-         */
-        Iterator operator--() {
-            current = current->prev;
-            return *this;
-        }
-
-        /**
-         * @brief Compare two iterators
-         * @param other Other iterator to compare
-         * @return True if the iterators are equal, false otherwise
-         */
-        bool operator==(const Iterator& other) const {
-            return current == other.current;
-        }
-
-        /**
-         * @brief Compare two iterators
-         * @param other Other iterator to compare
-         * @return True if the iterators are different, false otherwise
-         */
-        bool operator!=(const Iterator& other) const {
-            return current != other.current;
-        }
-
-        Node* current; // Current node
-    };
-
     /**
      * @brief Find a node in the list
      * @param data Data to find

@@ -13,3 +13,7 @@ set(SOURCES
 )
 
 add_library(MPointerLibrary STATIC ${SOURCES})
+
+set_target_properties(MPointerLibrary PROPERTIES
+    OUTPUT_NAME "MPointerLibrary"
+)

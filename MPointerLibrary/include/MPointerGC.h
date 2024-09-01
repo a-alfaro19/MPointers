@@ -26,7 +26,7 @@ public:
      * @brief Get the instance of the MPointerGC
      * @return Instance of the MPointerGC
      */
-    static MPointerGC* getInstance();
+    MPointerGC* getInstance();
 
     /**
      * @brief Register a pointer
@@ -76,7 +76,7 @@ private:
     /**
      * @brief Mark the used pointers
      */
-    void mark() const;
+    void mark();
 
     /**
      * @brief Sweep the unused pointers

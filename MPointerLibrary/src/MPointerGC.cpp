@@ -45,7 +45,7 @@ void MPointerGC::stop() noexcept {
 MPointerGC::MPointerGC()
     : nextId(1), running(true), gcThread([this]() { this->collectGarbage(); }) {}
 
-void MPointerGC::mark() const {
+void MPointerGC::mark() {
     for (const auto& it : mPointers) {
         if (it->refCount > 0) {
             it->marked = true;
