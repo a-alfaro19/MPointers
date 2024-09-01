@@ -7,10 +7,6 @@ add_subdirectory(../MPointerLibrary ../../MPointerLibrary/build/)
 
 include_directories(include)
 
-set(SOURCES
-        src/SortAlgorithms.cpp
-)
-
 add_executable(MainApp main.cpp)
 
 target_include_directories(MainApp PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
@@ -32,5 +28,6 @@ set(TEST_SOURCES
 )
 
 add_executable(MainApp_GTests_run ${TEST_SOURCES})
+target_include_directories(MainApp_GTests_run PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
 target_link_libraries(MainApp_GTests_run gtest gtest_main MPointerLibrary)
 add_test(NAME MainApp_GTests_run COMMAND MainApp_GTests_run )

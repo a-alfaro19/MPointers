@@ -3,7 +3,7 @@ project(MPointerLibrary)
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(include)
 
 set(SOURCES
     src/MPointerGC.cpp
@@ -28,7 +28,7 @@ set(TEST_SOURCES
         tests/MPointerGCTest.cpp
 )
 
-# 'Google_Tests_run' is the target name
-add_executable(Google_Tests_run ${TEST_SOURCES} ${SOURCES})
-target_link_libraries(Google_Tests_run gtest gtest_main)
-add_test(NAME Google_Tests_run COMMAND Google_Tests_run)
+# 'MPointerLib_GTests_run' is the target name
+add_executable(MPointerLib_GTests_run ${TEST_SOURCES} ${SOURCES})
+target_link_libraries(MPointerLib_GTests_run gtest gtest_main)
+add_test(NAME MPointerLib_GTests_run COMMAND MPointerLib_GTests_run)

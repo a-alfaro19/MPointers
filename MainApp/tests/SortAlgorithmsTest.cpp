@@ -10,7 +10,7 @@ protected:
     }
 
     void TearDown() override {
-        MPointerGC::getInstance().stop();
+        MPointerGC::getInstance()->stop();
     }
 };
 
