@@ -7,7 +7,13 @@ add_subdirectory(../MPointerLibrary ../../MPointerLibrary/build/)
 
 include_directories(include)
 
-add_executable(MainApp main.cpp)
+SET(SOURCES
+    main.cpp
+    src/DoublyLinkedList.cpp
+    src/SortAlgorithms.cpp
+)
+
+add_executable(MainApp ${SOURCES})
 
 target_include_directories(MainApp PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
 target_link_libraries(MainApp PRIVATE MPointerLibrary)
@@ -25,6 +31,7 @@ enable_testing()
 # Add test files
 set(TEST_SOURCES
         tests/SortAlgorithmsTest.cpp
+        tests/DoublyLinkedListTest.cpp
 )
 
 add_executable(MainApp_GTests_run ${TEST_SOURCES})

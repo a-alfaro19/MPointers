@@ -1,48 +1,60 @@
 #include "MPointerGC.h"
+#include <unistd.h>
+#include <cstdlib>
 
-MPointerGC* MPointerGC::instance{nullptr};
-std::mutex MPointerGC::mutex;
+using namespace MPOINTER;
+
+pthread_mutex_t MPointerGC::lock;
+pthread_cond_t MPointerGC::cond;
+MPointerGC* MPointerGC::instance = nullptr;
 
 MPointerGC::~MPointerGC() {
     stop();
-    if (gcThread.joinable()) {
-        gcThread.join();
-    }
+    pthread_mutex_destroy(&lock);
+    pthread_cond_destroy(&cond);
 }
 
 MPointerGC* MPointerGC::getInstance() {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (instance == nullptr) {
+    pthread_mutex_lock(&lock);
+    if (instance == nullptr) { // If the instance is null, create a new one
         instance = new MPointerGC();
     }
+    pthread_mutex_unlock(&lock);
     return instance;
 }
 
 int MPointerGC::registerPointer(void* pointer) {
-    std::lock_guard<std::mutex> lock(mutex);
+    pthread_mutex_lock(&lock);
     const int id = nextId++;
-    auto* info = new PointerInfo{pointer, 1, id, true};
-    mPointers.insert(info);
+    const auto* info = new PointerInfo{pointer, 1, id};
+    mPointers.insert(*info);
+    pthread_mutex_unlock(&lock);
     return id;
 }
 
-void MPointerGC::unregisterPointer(const int id) {
-    std::lock_guard<std::mutex> lock(mutex);
-    if (PointerInfo* pointerInfo = findByID(id); pointerInfo->id == id) {
-        pointerInfo->refCount--;
+void MPointerGC::unregisterPointer(const int id) const {
+    pthread_mutex_lock(&lock);
+    if (PointerInfo* pointerInfo = mPointers.find(id); pointerInfo->id == id) {
+        pointerInfo->refCount--; // Decrement the reference count
+        if (pointerInfo->refCount == 0) { // If the reference count is 0, free the memory
+            std::free(pointerInfo->pointer);
+            pointerInfo->pointer = nullptr;
+        }
     }
+    pthread_mutex_unlock(&lock);
 }
 
-void MPointerGC::incrementReference(const int id) {
-    std::lock_guard<std::mutex> lock(mutex);
-    auto* pointerInfo = findByID(id);
+void MPointerGC::incrementReference(const int id) const {
+    pthread_mutex_lock(&lock);
+    auto* pointerInfo = mPointers.find(id);
     pointerInfo->refCount++;
+    pthread_mutex_unlock(&lock);
 }
 
 void MPointerGC::stop() noexcept {
-    std::lock_guard<std::mutex> lock(mutex);
     running = false;
-    cv.notify_all();
+    pthread_cond_signal(&cond);
+    pthread_join(gcThread, nullptr);
 }
 
 bool MPointerGC::isRunning() const noexcept {
@@ -50,49 +62,37 @@ bool MPointerGC::isRunning() const noexcept {
 }
 
 int MPointerGC::getMPointersCount() const noexcept {
-    std::lock_guard<std::mutex> lock(mutex);
-    return mPointers.getSize();
+    pthread_mutex_unlock(&lock);
+    const int count = mPointers.getSize();
+    pthread_mutex_unlock(&lock);
+    return count;
 }
 
-MPointerGC::MPointerGC()
-    : nextId(1), running(true), gcThread([this]() { this->collectGarbage(); }) {}
-
-void MPointerGC::mark() {
-    for (const auto& it : mPointers) {
-        if (it->refCount > 0) {
-            it->marked = true;
-        } else {
-            it->marked = false;
-        }
-    }
+void MPointerGC::clearAllPointers() {
+    pthread_mutex_lock(&lock);
+    mPointers.clear();
+    nextId = 1;
+    pthread_mutex_unlock(&lock);
 }
 
-void MPointerGC::sweep() {
-    for(auto it = mPointers.begin(); it != mPointers.end();) {
-        if (!(*it)->marked) {
-            delete static_cast<char*>((*it)->pointer);
-            it = mPointers.remove(*it);
-        } else {
-            ++it;
-        }
-    }
+void MPointerGC::debug() const {
+    pthread_mutex_lock(&lock);
+    mPointers.printList();
+    pthread_mutex_unlock(&lock);
 }
 
-void MPointerGC::collectGarbage() {
-    while (running) {
-        std::unique_lock<std::mutex> lock(mutex);
-        cv.wait_for(lock, std::chrono::seconds(5), [this]() { return !running; });
-        mark();
-        sweep();
-    }
+MPointerGC::MPointerGC() : nextId(1), running(true) {
+    pthread_mutex_init(&lock, nullptr);
+    pthread_cond_init(&cond, nullptr);
+    pthread_create(&gcThread, nullptr, &collectGarbage, this);
 }
 
-MPointerGC::PointerInfo* MPointerGC::findByID(const int id) {
-    for (const auto& it : mPointers) {
-        if (it->id == id) {
-            return it;
-        }
+void* MPointerGC::collectGarbage(void* arg) {
+    auto* gc = static_cast<MPointerGC*>(arg);
+    while (gc->running) {
+        pthread_mutex_lock(&MPointerGC::lock);
+        gc->mPointers.removeUnusedPointers();
+        pthread_mutex_unlock(&MPointerGC::lock);
     }
     return nullptr;
 }
-

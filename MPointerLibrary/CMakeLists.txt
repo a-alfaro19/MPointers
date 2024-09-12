@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories(include)
 
 set(SOURCES
+    src/MPointerList.cpp
     src/MPointerGC.cpp
 )
 
@@ -23,7 +24,6 @@ enable_testing()
 
 # Add test files
 set(TEST_SOURCES
-        tests/DoublyLinkedListTest.cpp
         tests/MPointerTest.cpp
         tests/MPointerGCTest.cpp
 )

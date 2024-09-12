@@ -1,7 +1,9 @@
 #include <MPointerGC.h>
 #include <gtest/gtest.h>
 #include <MPointer.h>
+#include <unistd.h>
 
+using namespace MPOINTER;
 
 class MPointerGCTest : public ::testing::Test {
 protected:
@@ -10,10 +12,9 @@ protected:
     }
 
     void TearDown() override {
-        MPointerGC::getInstance()->stop();
+        MPointerGC::getInstance()->clearAllPointers();
     }
 };
-
 
 TEST_F(MPointerGCTest, GarbageCollectorStopsCorrectly) {
     {
@@ -62,25 +63,27 @@ TEST_F(MPointerGCTest, GarbageCollectorRunsAndCleansUp) {
     }
 
     // Wait for the GC to clean up
-    std::this_thread::sleep_for(std::chrono::seconds(6));
+    sleep(1);
 
     EXPECT_EQ(*ptr1, 50);
 }
 
 TEST_F(MPointerGCTest, PointerListSizeDecreases) {
-    MPointerGC* gc = MPointerGC::getInstance();
+    const MPointerGC* gc = MPointerGC::getInstance();
 
     MPointer<int> myPtr = MPointer<int>::New();
     const size_t sizeBefore = gc->getMPointersCount();
     EXPECT_GT(sizeBefore, 0);
+    gc->debug();
 
     {
         MPointer<int> myPtr2 = MPointer<int>::New();
         EXPECT_EQ(gc->getMPointersCount(), sizeBefore + 1);  // Size should have increased
+        gc->debug();
     }
 
     // Wait for the GC to clean up
-    std::this_thread::sleep_for(std::chrono::seconds(15));
+    gc->debug();
 
     // Check if the size has decreased
     const size_t sizeAfter = gc->getMPointersCount();

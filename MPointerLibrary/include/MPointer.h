@@ -1,6 +1,12 @@
 #pragma once
 
 #include <MPointerGC.h>
+#include <cstdlib>
+#include <stdexcept>
+#include <typeinfo>
+#include <iostream>
+
+namespace MPOINTER {
 
 template <typename T>
 class MPointer {
@@ -10,17 +16,27 @@ public:
      * @return MPointer
      */
     static MPointer New() {
-        T* memory = new T();
+        T* memory = static_cast<T*>(std::malloc(sizeof(T)));
         int newId = gc()->registerPointer(memory);
 
         return MPointer(memory, newId);
     }
 
     /**
+     * @brief Default constructor
+     */
+    MPointer(std::nullptr_t) {
+        pointer = nullptr;
+        id = -1;
+    }
+
+    /**
      * @brief Destructor
      */
     ~MPointer() {
-        gc()->unregisterPointer(id);
+        if (id != -1) {
+            gc()->unregisterPointer(id);
+        }
     }
 
     /**
@@ -28,28 +44,37 @@ public:
      * @return T& value
      */
     T& operator*() noexcept {
+        if (!pointer) {
+            throw std::runtime_error("Accessing a nullptr MPointer");
+        }
         return *pointer;
     }
 
     /**
-     * @brief Overload the & operator
-     * @return T value
+     * @brief Overload the -> operator
+     * @return T* pointer
      */
-    T operator&() noexcept {
-        return *pointer;
+    T* operator->() {
+        return pointer;
     }
 
     /**
-     * @brief Overload the = operator
+     * @brief Overload the = operator for a full copy
      * @param other MPointer
      * @return MPointer with the assigned value
      */
     MPointer& operator=(const MPointer& other) noexcept {
         if (this != &other) {
-            *pointer = *other.pointer;
-            id = other.id;
-            gc()->unregisterPointer(other.id);
-            gc()->incrementReference(id);
+            if (!other.isNull()) {
+                if (pointer != nullptr) {
+                    gc()->unregisterPointer(other.id);
+                }
+
+                pointer = other.pointer;
+                id = other.id;
+
+                gc()->incrementReference(id);
+            }
         }
 
         return *this;
@@ -62,7 +87,20 @@ public:
      */
     MPointer& operator=(const T& value) noexcept {
         if (typeid(value).name() == typeid(*pointer).name()) {
+            if (pointer == nullptr) {
+                allocate();
+            }
             *pointer = value;
+        }
+
+        return *this;
+    }
+
+    MPointer& operator=(std::nullptr_t) noexcept {
+        if (pointer != nullptr) {
+            gc()->unregisterPointer(id);
+            pointer = nullptr;
+            id = -1;
         }
 
         return *this;
@@ -75,6 +113,17 @@ public:
      */
     bool operator==(const MPointer& other) const noexcept {
         return id == other.id;
+    }
+
+    void allocate() {
+        if (pointer == nullptr) {
+            pointer = static_cast<T*>(std::malloc(sizeof(T)));
+            id = gc()->registerPointer(pointer);
+        }
+    }
+
+    [[nodiscard]] bool isNull() const noexcept {
+        return pointer == nullptr;
     }
 
 private:
@@ -95,3 +144,5 @@ private:
     int id; // MPointer id
     T* pointer; // Pointer to the memory
 };
+
+}

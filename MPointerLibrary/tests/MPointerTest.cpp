@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "MPointer.h"
 
+using namespace MPOINTER;
+
 class MPointerTest : public ::testing::Test {
 protected:
     void SetUp() override {
@@ -32,12 +34,6 @@ TEST_F(MPointerTest, DereferenceOperator) {
     auto mPointer = MPointer<int>::New();
     *mPointer = 10;
     EXPECT_EQ(*mPointer, 10);
-}
-
-TEST_F(MPointerTest, AddressOfOperator) {
-    auto mPointer = MPointer<int>::New();
-    *mPointer = 10;
-    EXPECT_EQ(&mPointer, *mPointer);
 }
 
 TEST_F(MPointerTest, AssignmentOperator) {
