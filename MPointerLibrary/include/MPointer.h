@@ -67,13 +67,19 @@ public:
         if (this != &other) {
             if (!other.isNull()) {
                 if (pointer != nullptr) {
-                    gc()->unregisterPointer(other.id);
+                    gc()->unregisterPointer(this->id);
                 }
 
                 pointer = other.pointer;
                 id = other.id;
 
                 gc()->incrementReference(id);
+            } else {
+                if (pointer != nullptr) {
+                    gc()->unregisterPointer(id);
+                    pointer = nullptr;
+                    id = -1;
+                }
             }
         }
 
