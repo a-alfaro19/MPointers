@@ -21,8 +21,31 @@ TEST_F(DoublyLinkedListTest, Insert) {
     list.insert(3);
 
     EXPECT_EQ(list.getSize(), 3);
-    EXPECT_EQ(list[0]->value, 1);
-    EXPECT_EQ(list[1]->value, 2);
-    EXPECT_EQ(list[2]->value, 3);
+    EXPECT_EQ(list[0]->data, 1);
+    EXPECT_EQ(list[1]->data, 2);
+    EXPECT_EQ(list[2]->data, 3);
 }
 
+TEST_F(DoublyLinkedListTest, AccessByIndex) {
+    DoublyLinkedList list;
+    list.insert(1);
+    list.insert(2);
+    list.insert(3);
+
+    EXPECT_EQ(list[0]->data, 1);
+    EXPECT_EQ(list[1]->data, 2);
+    EXPECT_EQ(list[2]->data, 3);
+}
+
+TEST_F(DoublyLinkedListTest, PrintList) {
+    DoublyLinkedList list;
+    list.insert(1);
+    list.insert(2);
+    list.insert(3);
+
+    testing::internal::CaptureStdout();
+    list.printList();
+    std::string output = testing::internal::GetCapturedStdout();
+
+    EXPECT_EQ(output, "1 2 3 \n");
+}

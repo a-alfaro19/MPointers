@@ -31,6 +31,9 @@ void DoublyLinkedList::swap(MPOINTER::MPointer<Node> a, MPOINTER::MPointer<Node>
 }
 
 MPOINTER::MPointer<Node> DoublyLinkedList::operator[](const int& index) const {
+    if (index < 0 || index >= size) {
+        throw std::out_of_range("Index out of range");
+    }
     auto current = MPOINTER::MPointer<Node>::New();
     current = first;
     for (int i = 0; i < index; i++) {

@@ -3,11 +3,10 @@
 #include <SortAlgorithms.h>
 #include "MPointer.h"
 #include <random>
-#include <unistd.h>
 
 using namespace MPOINTER;
 
-DoublyLinkedList* createRandomList(const int size, const int max) {
+DoublyLinkedList* createList(const int size, const int max) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> dis(0, max);
@@ -20,7 +19,7 @@ DoublyLinkedList* createRandomList(const int size, const int max) {
 
 int main()
 {
-    DoublyLinkedList* list = createRandomList(10, 20);
+    DoublyLinkedList* list = createList(10, 20);
     std::cout << "Finish creating list" << std::endl;
     list->printList();
     std::cout << "Finish printing list" << std::endl;

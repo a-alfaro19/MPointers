@@ -34,7 +34,7 @@ set(TEST_SOURCES
         tests/DoublyLinkedListTest.cpp
 )
 
-add_executable(MainApp_GTests_run ${TEST_SOURCES})
+add_executable(MainApp_GTests_run ${TEST_SOURCES} ${SOURCES})
 target_include_directories(MainApp_GTests_run PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
 target_link_libraries(MainApp_GTests_run gtest gtest_main MPointerLibrary)
 add_test(NAME MainApp_GTests_run COMMAND MainApp_GTests_run )

@@ -102,6 +102,10 @@ public:
         return *this;
     }
 
+    /**
+     * @brief Overload the = operator for a nullptr
+     * @return Null MPointer
+     */
     MPointer& operator=(std::nullptr_t) noexcept {
         if (pointer != nullptr) {
             gc()->unregisterPointer(id);
@@ -121,6 +125,9 @@ public:
         return id == other.id;
     }
 
+    /**
+     * @brief Allocate memory for a null MPointer
+     */
     void allocate() {
         if (pointer == nullptr) {
             pointer = static_cast<T*>(std::malloc(sizeof(T)));
@@ -128,6 +135,10 @@ public:
         }
     }
 
+    /**
+     * @brief Check if the MPointer is null
+     * @return True if the MPointer is null, false otherwise
+     */
     [[nodiscard]] bool isNull() const noexcept {
         return pointer == nullptr;
     }

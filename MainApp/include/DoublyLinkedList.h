@@ -3,9 +3,9 @@
 #include <MPointer.h>
 
 struct Node {
-  int data;
-  MPOINTER::MPointer<Node> next = nullptr;
-  MPOINTER::MPointer<Node> previous = nullptr;
+  int data; // Data stored in the node
+  MPOINTER::MPointer<Node> next = nullptr; // Pointer to the next node
+  MPOINTER::MPointer<Node> previous = nullptr; // Pointer to the previous node
 };
 
 class DoublyLinkedList {
@@ -52,7 +52,7 @@ public:
   void printList() const;
 
 private:
-  MPOINTER::MPointer<Node> first = nullptr;
-  MPOINTER::MPointer<Node> last = nullptr;
-  int size;
+  MPOINTER::MPointer<Node> first = nullptr; // Pointer to the first node
+  MPOINTER::MPointer<Node> last = nullptr; // Pointer to the last node
+  int size; // Size of the list
 };

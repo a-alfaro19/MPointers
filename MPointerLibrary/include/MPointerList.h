@@ -6,9 +6,9 @@ namespace MPOINTER {
  * MPointer Info
  */
 struct PointerInfo {
- void* pointer;
- int refCount;
- int id;
+ void* pointer; // Pointer address
+ int refCount; // Reference count
+ int id; // MPointer id
 };
 
 /**
