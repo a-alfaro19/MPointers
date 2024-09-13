@@ -1,6 +1,5 @@
 #include "DoublyLinkedList.h"
 #include <iostream>
-#include <typeinfo>
 
 DoublyLinkedList::DoublyLinkedList()
     : size(0) {
@@ -32,7 +31,8 @@ void DoublyLinkedList::swap(MPOINTER::MPointer<Node> a, MPOINTER::MPointer<Node>
 }
 
 MPOINTER::MPointer<Node> DoublyLinkedList::operator[](const int& index) const {
-    auto current = first;
+    auto current = MPOINTER::MPointer<Node>::New();
+    current = first;
     for (int i = 0; i < index; i++) {
         current = current->next;
     }
@@ -44,7 +44,8 @@ int DoublyLinkedList::getSize() const {
 }
 
 void DoublyLinkedList::printList() const {
-    auto current = first;
+    auto current = MPOINTER::MPointer<Node>::New();
+    current = first;
     while (!current.isNull()) {
         std::cout << current->data << " ";
         current = current->next;

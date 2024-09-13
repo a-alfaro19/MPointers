@@ -73,7 +73,7 @@ public:
                 pointer = other.pointer;
                 id = other.id;
 
-                gc()->incrementReference(id);
+                gc()->incrementReference(other.id);
             } else {
                 if (pointer != nullptr) {
                     gc()->unregisterPointer(id);

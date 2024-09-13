@@ -31,7 +31,7 @@ public:
    * @param a Node a
    * @param b Node b
    */
-  void swap(MPOINTER::MPointer<Node> a, MPOINTER::MPointer<Node> b);
+  static void swap(MPOINTER::MPointer<Node> a, MPOINTER::MPointer<Node> b);
 
   /**
    * @brief Overload the [] operator

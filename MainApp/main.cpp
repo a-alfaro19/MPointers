@@ -21,8 +21,11 @@ DoublyLinkedList* createRandomList(const int size, const int max) {
 int main()
 {
     DoublyLinkedList* list = createRandomList(10, 20);
+    std::cout << "Finish creating list" << std::endl;
     list->printList();
-    SORTALGORITHMS::quickSort(*list, 0, list->getSize() - 1);
+    std::cout << "Finish printing list" << std::endl;
+    SORTALGORITHMS::insertionSort(*list);
+    list->printList();
     std::cout << list->getSize() << std::endl;
     return 0;
 }
