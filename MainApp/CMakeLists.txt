@@ -8,12 +8,11 @@ add_subdirectory(../MPointerLibrary ../../MPointerLibrary/build/)
 include_directories(include)
 
 SET(SOURCES
-    main.cpp
     src/DoublyLinkedList.cpp
     src/SortAlgorithms.cpp
 )
 
-add_executable(MainApp ${SOURCES})
+add_executable(MainApp main.cpp ${SOURCES})
 
 target_include_directories(MainApp PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../MPointerLibrary/include")
 target_link_libraries(MainApp PRIVATE MPointerLibrary)

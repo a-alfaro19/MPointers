@@ -3,16 +3,7 @@
 
 using namespace MPOINTER;
 
-class MPointerTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        MPointerGC::getInstance();
-    }
-
-    void TearDown() override {
-        MPointerGC::getInstance()->stop();
-    }
-};
+class MPointerTest : public ::testing::Test {};
 
 TEST_F(MPointerTest, CreateAndAssignValue) {
     MPointer<int> myPtr = MPointer<int>::New();

@@ -5,16 +5,7 @@
 
 using namespace MPOINTER;
 
-class MPointerGCTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        MPointerGC::getInstance();
-    }
-
-    void TearDown() override {
-        MPointerGC::getInstance()->clearAllPointers();
-    }
-};
+class MPointerGCTest : public ::testing::Test {};
 
 TEST_F(MPointerGCTest, GarbageCollectorStopsCorrectly) {
     {
@@ -74,16 +65,14 @@ TEST_F(MPointerGCTest, PointerListSizeDecreases) {
     MPointer<int> myPtr = MPointer<int>::New();
     const size_t sizeBefore = gc->getMPointersCount();
     EXPECT_GT(sizeBefore, 0);
-    gc->debug();
 
     {
         MPointer<int> myPtr2 = MPointer<int>::New();
         EXPECT_EQ(gc->getMPointersCount(), sizeBefore + 1);  // Size should have increased
-        gc->debug();
     }
 
     // Wait for the GC to clean up
-    gc->debug();
+    sleep(1);
 
     // Check if the size has decreased
     const size_t sizeAfter = gc->getMPointersCount();

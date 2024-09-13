@@ -4,16 +4,7 @@
 #include "SortAlgorithms.h"
 #include <random>
 
-class SortAlgorithmsTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        MPOINTER::MPointerGC::getInstance();
-    }
-
-    void TearDown() override {
-        MPOINTER::MPointerGC::getInstance()->stop();
-    }
-};
+class SortAlgorithmsTest : public ::testing::Test {};
 
 DoublyLinkedList* createRandomList(const int size, const int max) {
     std::random_device rd;
